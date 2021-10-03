@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session')
-var sequelize = require('./database/sequelize')
+const { syncAllModel } = require("./database/models")
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -27,7 +27,7 @@ app.all("*",function(req,res,next){
   else
       next();
 })
-
+syncAllModel();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

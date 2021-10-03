@@ -8,7 +8,7 @@ const sequelize = new Sequelize({
     acquire: 30000,
     idle: 10000
   },
-  storage: '../blog.db'
+  storage: './blog.db'
 });
 try {
     sequelize.authenticate();
