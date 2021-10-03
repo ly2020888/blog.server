@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   pool: {
-    max: 50,
+    max: 20,
     min: 0,
     acquire: 30000,
     idle: 10000

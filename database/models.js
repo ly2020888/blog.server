@@ -5,6 +5,7 @@ const User = sequelize.define('User', {
     // 在这里定义模型属性
     account: {
       type: DataTypes.STRING,
+      unique: true,
       allowNull: false
     },
     nickname: {
@@ -24,24 +25,56 @@ const User = sequelize.define('User', {
         allowNull: false
     },
     avatarId: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
     }
   }, {
     timestamps: false
 });
- async function syncAllModel(){
-    await User.sync({ alter: true });
-    console.log("用户模型表刚刚(重新)创建！");
-    const admin = await User.create({ 
-        account: "admin", 
-        nickname: "liuyi" ,
-        pass: "123",
-        email: "123",
-        priority: 0,
-        avatarId: "1"
+async function syncAllModel(){
+    await User.sync({ force: true });
+}
+async function register (registerInfo){
+    const foundOne = await User.findAll({
+        where: {
+            account: registerInfo.account
+        }
     });
-    console.log("Jane's auto-generated ID:", admin.account);  
+    if(foundOne.length === 0){
+        await User.create({
+            account: registerInfo.account,
+            nickname: "undefined",
+            pass: registerInfo.pass,
+            email: registerInfo.email,
+            priority: 0,
+            avatarId: 114512
+        })
+        return new Promise((resolve, reject) => 
+            resolve("注册成功")
+        )
+    }else{
+        return new Promise((resolve, reject) => 
+            reject("用户名不能相同")
+        )
+    }
+}
+async function login(loginInfo){
+    const foundOne = await User.findAll({
+        where: {
+            account: loginInfo.account
+        }
+    });
+    if(foundOne.length){
+        console.log(foundOne[0].pass+" "+loginInfo.pass)
+        if(loginInfo.pass === foundOne[0].pass){
+            return new Promise((resolve, reject) => 
+                resolve()
+            )
+        }
+    }
+    else return new Promise((resolve, reject) => reject())
 }
 module.exports = {
-    syncAllModel
+    syncAllModel,
+    register,
+    login
 }

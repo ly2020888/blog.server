@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+const { register, login } = require("../database/models")
 router.post('/loginStatus', function(req, res, next) { //用来探测是否还保持着登陆状态
   if(req.session.account){
     res.status(200).send({isLogged:true});
@@ -11,12 +11,14 @@ router.post('/loginStatus', function(req, res, next) { //用来探测是否还�
 
 router.post('/login', function(req, res, next) { //用来负责处理登录
   // 通过验证
-  if(req.session.account){
-    res.status(200).send({text:"已登录"});
-    return 
+  if(!req.session.account){
+    login(req.body).then(function(){
+      req.session.account = req.body.account
+      res.status(200).send({text: "登录成功", code: 0});
+    },function(){
+      res.status(200).send({text: "登录失败", code: 1});
+    })
   }
-  req.session.account = req.body.account
-  res.status(200).send({text:"登陆成功"});
 });
 
 router.post('/userInfo', function(req, res, next) { //用来负责处理登录
@@ -32,7 +34,12 @@ router.get('/logout', function(req, res, next) { //用来负责处理登录
 });
 router.post('/register', function(req, res, next) { //用来负责处理登录
   console.log(req.body)
-  res.status(200).send({text:"注册成功"});
+  register(req.body).then(function(response){
+    res.status(200).send({text: response, code: 0});
+  },function(err){
+    res.status(200).send({text: err, code: 1});
+  })
+  
 });
 
 module.exports = router;
