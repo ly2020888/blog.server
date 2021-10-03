@@ -29,7 +29,10 @@ router.get('/logout', function(req, res, next) { //用来负责处理登录
   req.session.destroy(function(err) {
     res.status(200)
   })
-  
+});
+router.post('/register', function(req, res, next) { //用来负责处理登录
+  console.log(req.body)
+  res.status(200).send({text:"注册成功"});
 });
 
 module.exports = router;
