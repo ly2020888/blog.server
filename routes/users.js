@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { register, login } = require("../database/models")
+const { register, login, getUserInfo } = require("../database/models")
 router.post('/loginStatus', function(req, res, next) { //用来探测是否还保持着登陆状态
   if(req.session.account){
     res.status(200).send({isLogged:true});
@@ -14,7 +14,7 @@ router.post('/login', function(req, res, next) { //用来负责处理登录
   if(!req.session.account){
     login(req.body).then(function(){
       req.session.account = req.body.account
-      res.status(200).send({text: "登录成功", code: 0});
+      res.status(200).send({text: "登录成功", code: 0, account: req.session.account});
     },function(){
       res.status(200).send({text: "登录失败", code: 1});
     })
@@ -22,8 +22,15 @@ router.post('/login', function(req, res, next) { //用来负责处理登录
 });
 
 router.post('/userInfo', function(req, res, next) { //用来负责处理登录
-  if(req.session.account){
+  if(req.session.account&&req.session.account === req.body.account){
     //返回用户信息，返回用户信息后应该前端保存，不应该连续返回，应该设置该函数的调用最短周期
+    getUserInfo(req.session.account).then(function(response){
+      res.send(response);
+      return ;
+    },function(err){
+      res.send({text:err, code:1});
+      return ;
+    })
   }
 });
 

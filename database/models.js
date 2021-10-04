@@ -31,7 +31,7 @@ const User = sequelize.define('User', {
     timestamps: false
 });
 async function syncAllModel(){
-    await User.sync({ force: true });
+    await User.sync({ alter: true });
 }
 async function register (registerInfo){
     const foundOne = await User.findAll({
@@ -73,8 +73,24 @@ async function login(loginInfo){
     }
     else return new Promise((resolve, reject) => reject())
 }
+async function getUserInfo(account){
+    const foundOne = await User.findAll({
+        where: {
+            account: account
+        }
+    });
+    if(foundOne.length){
+        return new Promise((resolve, reject) => 
+                resolve(foundOne[0])
+            )
+    }else 
+        return new Promise((resolve, reject) =>
+                reject("未能找到"+account+"的用户")
+            )
+}
 module.exports = {
     syncAllModel,
     register,
-    login
+    login,
+    getUserInfo
 }
