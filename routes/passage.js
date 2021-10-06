@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var { uploadPassage, getTotalPassageNum }  = require("../database/models")
+var { uploadPassage, getTotalPassageNum, getPassage }  = require("../database/models")
 router.post("/uploadPassage", function(req, res){
     if(req.session.account === req.body.account){
         
@@ -18,5 +18,15 @@ router.get("/getTotalPassageNum",function(req, res){
         res.send({passageNum: response[0].dataValues.pnum})
     })
 })
+router.post("/getPassage", function(req, res){
+    getPassage(req.body.offset).then(function(response){
+        res.send(response)
+    })
+})
+router.post("/getPassageContentById", function(req, res){
+    getPassage(req.body.offset).then(function(response){
+        res.send(response)
+    })
 
+})
 module.exports = router;

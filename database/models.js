@@ -55,8 +55,8 @@ const Passage = sequelize.define('passage', {
 });
 async function syncAllModel(){
     User.hasMany(Passage);
-    await User.sync({ alter: true });
-    await Passage.sync({ alter: true });
+    await User.sync();
+    await Passage.sync();
 }
 async function register (registerInfo){
     const foundOne = await User.findAll({
@@ -130,11 +130,43 @@ async function getTotalPassageNum(){
     })
     return new Promise((resolve, reject) => resolve(result))
 }
+
+async function getPassage(offset){
+    let result = await Passage.findAll({
+        order: [['updatedAt', 'DESC']],
+        limit: 5,
+        offset: offset
+    })
+    result = result.map((i)=>{
+        i = i.content.slice(0,50); // 这里是减除文章部分长度
+        return i;
+    })
+return new Promise ((resolve, reject) => {
+        resolve(result)
+    })
+}
+async function getPassageById(passageId){
+    const result = await Passage.findAll({
+        where:{
+            passageId: passageId
+        }
+    })
+    if(result.length){
+        return new Promise((resolve, reject)=>{
+            resolve(result)
+        })
+    }else {
+        return new Promise((resolve, reject)=>{
+            reject("未找到对应的文章内容")
+        })
+    }
+}
 module.exports = {
     syncAllModel,
     register,
     login,
     getUserInfo,
     uploadPassage,
-    getTotalPassageNum
+    getTotalPassageNum,
+    getPassage
 }
