@@ -6,7 +6,8 @@ const User = sequelize.define('User', {
     account: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: false
+      allowNull: false,
+      primaryKey: true
     },
     nickname: {
       type: DataTypes.STRING,
@@ -30,8 +31,32 @@ const User = sequelize.define('User', {
   }, {
     timestamps: false
 });
+const Passage = sequelize.define('passage', {
+        passageId: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
+            primaryKey: true
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        content: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        UserAccount: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        }
+  },{
+
+});
 async function syncAllModel(){
+    User.hasMany(Passage);
     await User.sync({ alter: true });
+    await Passage.sync({ alter: true });
 }
 async function register (registerInfo){
     const foundOne = await User.findAll({
@@ -88,9 +113,28 @@ async function getUserInfo(account){
                 reject("未能找到"+account+"的用户")
             )
 }
+async function uploadPassage(passage){
+    await Passage.create({
+        passageId: passage.passageId,
+        UserAccount: passage.account,
+        content: passage.content,
+        title: passage.title
+    })
+    return new Promise((resolve)=>resolve("文章创建完毕"))
+}
+async function getTotalPassageNum(){
+    const result = await Passage.findAll({
+        attributes: [
+            [sequelize.fn('COUNT', sequelize.col('passageId')), 'pnum']
+        ]
+    })
+    return new Promise((resolve, reject) => resolve(result))
+}
 module.exports = {
     syncAllModel,
     register,
     login,
-    getUserInfo
+    getUserInfo,
+    uploadPassage,
+    getTotalPassageNum
 }
