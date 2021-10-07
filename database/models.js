@@ -138,7 +138,7 @@ async function getPassage(offset){
         offset: offset
     })
     result = result.map((i)=>{
-        i = i.content.slice(0,50); // 这里是减除文章部分长度
+        i.content = i.content.slice(0,50); // 这里是减除文章部分长度
         return i;
     })
 return new Promise ((resolve, reject) => {
@@ -153,7 +153,7 @@ async function getPassageById(passageId){
     })
     if(result.length){
         return new Promise((resolve, reject)=>{
-            resolve(result)
+            resolve(result[0])
         })
     }else {
         return new Promise((resolve, reject)=>{
@@ -168,5 +168,6 @@ module.exports = {
     getUserInfo,
     uploadPassage,
     getTotalPassageNum,
-    getPassage
+    getPassage,
+    getPassageById
 }

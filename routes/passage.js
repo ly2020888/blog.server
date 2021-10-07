@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var { uploadPassage, getTotalPassageNum, getPassage }  = require("../database/models")
+var { uploadPassage, getTotalPassageNum, getPassage, getPassageById }  = require("../database/models")
 router.post("/uploadPassage", function(req, res){
     if(req.session.account === req.body.account){
         
@@ -24,7 +24,7 @@ router.post("/getPassage", function(req, res){
     })
 })
 router.post("/getPassageContentById", function(req, res){
-    getPassage(req.body.offset).then(function(response){
+    getPassageById(req.body.passageId).then(function(response){
         res.send(response)
     })
 
