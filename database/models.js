@@ -27,6 +27,18 @@ const User = sequelize.define('User', {
     },
     avatarId: {
         type: DataTypes.STRING,
+    },
+    fansNum:{
+        type: DataTypes.NUMBER,
+        defaultValue: 0
+    },
+    visitNum:{
+        type: DataTypes.NUMBER,
+        defaultValue: 0
+    },
+    description:{
+        type: DataTypes.STRING,
+        defaultValue: "该用户暂时没有描述"
     }
   }, {
     timestamps: false

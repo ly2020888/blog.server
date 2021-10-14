@@ -22,16 +22,14 @@ router.post('/login', function(req, res, next) { //用来负责处理登录
 });
 
 router.post('/userInfo', function(req, res, next) { //用来负责处理登录
-  if(req.session.account&&req.session.account === req.body.account){
-    //返回用户信息，返回用户信息后应该前端保存，不应该连续返回，应该设置该函数的调用最短周期
-    getUserInfo(req.session.account).then(function(response){
-      res.send(response);
-      return ;
-    },function(err){
-      res.send({text:err, code:1});
-      return ;
-    })
-  }
+  //返回用户信息，返回用户信息后应该前端保存，不应该连续返回，应该设置该函数的调用最短周期
+  getUserInfo(req.body.account).then(function(response){
+    res.send(response);
+    return ;
+  },function(err){
+    res.send({text:err, code:1});
+    return ;
+  })
 });
 
 router.get('/logout', function(req, res, next) { //用来负责处理登录
